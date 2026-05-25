@@ -9,3 +9,6 @@ str2.jpg
 str3.jpg
 sticker-ref.png
 bg-ocean.jpg
+*.pdf
+*.docx
+~$*
