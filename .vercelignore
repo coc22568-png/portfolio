@@ -1,0 +1,10 @@
+portfolio/
+portfolio/*
+node_modules/
+.git/
+个人照片.zip
+model-info.md
+str1.jpg
+str2.jpg
+str3.jpg
+sticker-ref.png

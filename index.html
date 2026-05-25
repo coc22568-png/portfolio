@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>魏嘉颖 COCO — Return to Zero, Update, Restart, Go Up</title>
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=ZCOOL+XiaoWei&family=Ma+Shan+Zheng&family=Caveat:wght@400;600;700&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+<style>
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; }
+body {
+  font-family: 'ZCOOL KuaiLe', 'ZCOOL XiaoWei', 'Ma Shan Zheng', 'PingFang SC', 'Microsoft YaHei', cursive;
+  background: #e8f6fc;
+  color: #1B3A5C;
+  overflow: hidden;
+  line-height: 1.7;
+}
+
+/* ===== Ocean Background ===== */
+.ocean-bg {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  z-index: -2;
+  background: url('bg1.jpg') center/cover no-repeat;
+}
+.ocean-bg::after {
+  content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(180deg, rgba(180,215,240,0.22) 0%, rgba(200,225,245,0.28) 40%, rgba(180,215,240,0.22) 100%);
+}
+.light-spots {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none;
+}
+.light-spot {
+  position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.3;
+  animation: lightDrift 12s ease-in-out infinite;
+}
+.light-spot:nth-child(1) { width: 400px; height: 400px; background: rgba(255,255,255,0.45); top: 5%; left: 10%; animation-delay: 0s; }
+.light-spot:nth-child(2) { width: 300px; height: 300px; background: rgba(180,220,255,0.35); top: 30%; right: 8%; animation-delay: -4s; }
+.light-spot:nth-child(3) { width: 350px; height: 350px; background: rgba(200,235,255,0.4); bottom: 20%; left: 15%; animation-delay: -7s; }
+.light-spot:nth-child(4) { width: 250px; height: 250px; background: rgba(255,255,255,0.3); top: 55%; right: 20%; animation-delay: -9s; }
+.light-spot:nth-child(5) { width: 280px; height: 280px; background: rgba(140,200,240,0.25); bottom: 8%; right: 12%; animation-delay: -3s; }
+@keyframes lightDrift {
+  0%, 100% { transform: translate(0,0) scale(1); }
+  25% { transform: translate(30px,-20px) scale(1.05); }
+  50% { transform: translate(-20px,15px) scale(0.95); }
+  75% { transform: translate(15px,-10px) scale(1.03); }
+}
+
+/* ===== Floating Stickers ===== */
+.deco {
+  position: fixed; pointer-events: none;
+  animation: floatSticker 7s ease-in-out infinite;
+  filter: drop-shadow(0 4px 14px rgba(74,144,217,0.18));
+}
+.deco:nth-child(odd) { animation-duration: 8s; animation-delay: -2s; }
+.deco:nth-child(even) { animation-duration: 6s; animation-delay: -4s; }
+@keyframes floatSticker {
+  0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)) scale(1); }
+  25% { transform: translateY(-14px) rotate(calc(var(--rot, 0deg) + 3deg)) scale(1.04); }
+  50% { transform: translateY(-7px) rotate(calc(var(--rot, 0deg) - 2deg)) scale(0.97); }
+  75% { transform: translateY(-18px) rotate(calc(var(--rot, 0deg) + 1deg)) scale(1.02); }
+}
+.sticker-svg { width: var(--size, 60px); height: var(--size, 60px); opacity: 0.72; }
+
+/* ===== Navigation Dots ===== */
+.nav-dots {
+  position: fixed; right: 22px; top: 50%; transform: translateY(-50%);
+  z-index: 100; display: flex; flex-direction: column; gap: 14px;
+}
+.nav-dot {
+  width: 11px; height: 11px; border-radius: 50%;
+  background: rgba(74,144,217,0.3); cursor: pointer;
+  transition: all 0.3s; border: 2px solid rgba(74,144,217,0.5);
+}
+.nav-dot.active, .nav-dot:hover { background: #4A90D9; border-color: #4A90D9; transform: scale(1.3); }
+
+/* ===== Page Layout ===== */
+.page {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+  opacity: 0; pointer-events: none;
+  transform: translateY(18px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.page.active { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.page.scrollable { overflow-y: auto; overflow-x: hidden; }
+
+/* ===== Typography ===== */
+.handwrite { font-family: 'Caveat', 'Shadows Into Light', cursive; }
+.slogan-text { font-family: 'Caveat', cursive; letter-spacing: 0.04em; }
+
+/* ===== Section 1: Home ===== */
+#home { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 50px 40px 24px; overflow: hidden; }
+
+.honors-marquee {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  overflow: hidden; pointer-events: none; z-index: 0;
+}
+.honors-track {
+  display: flex; flex-direction: column; gap: 12px;
+  opacity: 0.06; white-space: nowrap;
+  animation: honorsScroll 40s linear infinite;
+}
+.honors-track span {
+  font-size: 1.6rem; font-weight: 900; color: #1B3A5C;
+  letter-spacing: 0.12em; font-style: italic;
+}
+@keyframes honorsScroll {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+
+.cover-content {
+  position: relative; z-index: 2; display: flex;
+  align-items: center; justify-content: center;
+  max-width: 1100px; width: 100%; gap: 50px;
+  margin-bottom: 22px;
+}
+
+.cover-left { flex: 1; text-align: left; padding-left: 30px; }
+.cover-left .name {
+  font-family: 'ZCOOL KuaiLe', 'ZCOOL XiaoWei', 'Ma Shan Zheng', cursive;
+  font-size: 3.4rem; font-weight: 400; color: #fff;
+  letter-spacing: 0.06em; margin-bottom: 6px;
+  text-shadow: 0 2px 14px rgba(100,160,220,0.4);
+}
+.cover-left .name span { color: rgba(255,255,255,0.85); font-size: 1.7rem; font-weight: 400; margin-left: 10px; }
+.cover-left .slogan {
+  font-family: 'Caveat', cursive;
+  font-size: 1.5rem; color: rgba(255,255,255,0.85); font-style: italic;
+  margin-bottom: 4px; letter-spacing: 0.04em; font-weight: 600;
+  text-shadow: 0 1px 6px rgba(74,144,217,0.25);
+}
+.cover-left .summary {
+  font-family: 'ZCOOL XiaoWei', serif;
+  font-size: 1.1rem; color: #FFF8DC; margin-bottom: 24px;
+  padding: 7px 15px; background: rgba(255,255,255,0.2);
+  border-radius: 20px; display: inline-block;
+}
+
+.cover-right { flex: 0 0 440px; }
+.carousel {
+  position: relative; width: 400px; height: 460px; margin: 0 auto;
+  border-radius: 24px; overflow: hidden;
+  box-shadow: 0 20px 50px rgba(74,144,217,0.25);
+  background: rgba(255,255,255,0.3);
+}
+.carousel-inner {
+  display: flex; transition: transform 0.6s cubic-bezier(0.25,0.1,0.25,1);
+  height: 100%;
+}
+.carousel-slide {
+  min-width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #d4eaf7, #b8dff5);
+  color: #8BB8D6; font-size: 0.9rem;
+}
+.carousel-slide img { width: 100%; height: 100%; object-fit: cover; }
+.carousel-dots {
+  position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 8px;
+}
+.carousel-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(255,255,255,0.5); cursor: pointer;
+  transition: all 0.3s;
+}
+.carousel-dot.active { background: #fff; transform: scale(1.3); }
+
+.edu-cards {
+  position: relative; z-index: 2; display: flex; gap: 24px;
+  max-width: 700px; width: 100%; margin-bottom: 24px;
+}
+.edu-card {
+  flex: 1; background: rgba(255,255,255,0.5);
+  backdrop-filter: blur(12px);
+  border-radius: 18px; padding: 20px;
+  border: 1.5px solid rgba(180,215,240,0.5);
+  box-shadow: 0 8px 30px rgba(74,144,217,0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.edu-card:hover { transform: translateY(-4px); box-shadow: 0 14px 40px rgba(74,144,217,0.2); }
+.edu-card .school { font-family: 'ZCOOL XiaoWei', serif; font-size: 1.15rem; font-weight: 700; color: #1B3A5C; margin-bottom: 4px; }
+.edu-card .tag {
+  display: inline-block; background: rgba(74,144,217,0.15);
+  color: #4A90D9; padding: 2px 10px; border-radius: 10px;
+  font-size: 0.8rem; font-weight: 600; margin-bottom: 8px;
+}
+.edu-card .major { font-size: 0.95rem; color: #3A7BBF; margin-bottom: 4px; }
+.edu-card .period { font-size: 0.85rem; color: #6BA0D6; margin-bottom: 4px; }
+.edu-card .grade { font-size: 0.85rem; color: #5A8FC7; }
+
+.nav-btns {
+  position: relative; z-index: 2; display: flex; gap: 20px; margin-bottom: 24px;
+}
+.ocean-btn {
+  padding: 14px 36px; border-radius: 50px; font-size: 1rem; font-weight: 600;
+  cursor: pointer; border: none; letter-spacing: 0.04em;
+  font-family: 'ZCOOL XiaoWei', serif;
+  background: linear-gradient(135deg, rgba(255,255,255,0.6), rgba(180,220,245,0.5));
+  color: #2B6AA8; backdrop-filter: blur(8px);
+  box-shadow: 0 4px 20px rgba(74,144,217,0.15);
+  border: 1.5px solid rgba(160,210,240,0.6);
+  transition: all 0.35s; position: relative; overflow: hidden;
+  text-decoration: none; display: inline-block; text-align: center;
+}
+.ocean-btn::before {
+  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+  transition: left 0.6s;
+}
+.ocean-btn:hover::before { left: 100%; }
+.ocean-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 35px rgba(74,144,217,0.3);
+  background: linear-gradient(135deg, rgba(160,215,245,0.5), rgba(200,230,250,0.6));
+}
+
+.cover-footer {
+  position: relative; z-index: 2; text-align: center;
+  color: #5A8FC7; font-size: 0.85rem;
+}
+.cover-footer .contact { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+.cover-footer .contact span { display: inline-flex; align-items: center; gap: 5px; }
+
+/* ===== Section 2 & 3: Internships & Projects ===== */
+#internships, #projects { padding: 70px 40px 50px; display: flex; flex-direction: column; align-items: center; }
+.section-title {
+  font-family: 'ZCOOL KuaiLe', 'ZCOOL XiaoWei', 'Ma Shan Zheng', cursive;
+  font-size: 2.6rem; font-weight: 400; color: #1B3A5C;
+  margin-bottom: 40px; letter-spacing: 0.06em;
+  position: relative; z-index: 2;
+}
+.section-title::after {
+  content: ''; display: block; width: 60px; height: 3px;
+  background: linear-gradient(90deg, #4A90D9, #87CEEB);
+  margin: 10px auto 0; border-radius: 2px;
+}
+
+.timeline {
+  position: relative; max-width: 900px; width: 100%; z-index: 2;
+}
+.timeline::before {
+  content: ''; position: absolute; left: 50%; top: 0; bottom: 0;
+  width: 2px; background: linear-gradient(180deg, rgba(74,144,217,0.2), rgba(74,144,217,0.5), rgba(74,144,217,0.2));
+  transform: translateX(-50%);
+}
+.timeline-item {
+  position: relative; display: flex; align-items: flex-start;
+  margin-bottom: 48px; opacity: 0; transform: translateY(30px);
+  transition: all 0.6s ease;
+}
+.timeline-item.visible { opacity: 1; transform: translateY(0); }
+.timeline-item:nth-child(odd) { flex-direction: row; }
+.timeline-item:nth-child(even) { flex-direction: row-reverse; }
+
+.timeline-content {
+  width: 44%; background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(10px); border-radius: 18px;
+  padding: 22px; box-shadow: 0 6px 25px rgba(74,144,217,0.1);
+  border: 1.5px solid rgba(180,215,240,0.5);
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+}
+.timeline-content:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(74,144,217,0.2); }
+.timeline-content .badge {
+  display: inline-block; padding: 3px 12px; border-radius: 12px;
+  font-size: 0.75rem; font-weight: 700; margin-bottom: 6px;
+}
+.badge-intern { background: rgba(74,144,217,0.15); color: #4A90D9; }
+.badge-project { background: rgba(135,206,235,0.2); color: #3A7BBF; }
+.timeline-content h3 { font-family: 'ZCOOL KuaiLe', 'ZCOOL XiaoWei', cursive; font-size: 1.1rem; margin: 4px 0; color: #1B3A5C; }
+.timeline-content .role { font-size: 0.82rem; color: #4A90D9; font-weight: 500; margin-bottom: 2px; }
+.timeline-content .date { font-size: 0.78rem; color: #8BB8D6; margin-bottom: 8px; }
+.timeline-content .desc { font-size: 0.88rem; color: #3A6A9E; line-height: 1.5; margin-bottom: 10px; }
+.skills { display: flex; flex-wrap: wrap; gap: 6px; }
+.skill-tag {
+  padding: 3px 10px; border-radius: 12px; font-size: 0.72rem;
+  background: rgba(135,206,235,0.2); color: #3A7BBF;
+  border: 1px solid rgba(135,206,235,0.3);
+}
+.detail-link {
+  display: inline-block; margin-top: 10px; color: #4A90D9;
+  font-size: 0.82rem; cursor: pointer; text-decoration: underline;
+  font-weight: 500; transition: color 0.2s;
+}
+.detail-link:hover { color: #2B6AA8; }
+
+.timeline-img {
+  width: 44%; border-radius: 16px; overflow: hidden;
+  box-shadow: 0 8px 25px rgba(74,144,217,0.15);
+  background: linear-gradient(135deg, #e0f0fa, #c8e4f7);
+  aspect-ratio: 16/10; display: flex; align-items: center; justify-content: center;
+  color: #8BB8D6; font-size: 0.85rem;
+}
+.timeline-img img { width: 100%; height: 100%; object-fit: cover; }
+
+.timeline-node {
+  position: absolute; left: 50%; top: 20px; transform: translateX(-50%);
+  width: 20px; height: 20px; border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, #fff, #87CEEB);
+  box-shadow: 0 0 15px rgba(135,206,235,0.6), 0 0 30px rgba(135,206,235,0.3);
+  z-index: 3; animation: pearlPulse 3s ease-in-out infinite;
+}
+@keyframes pearlPulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(135,206,235,0.5), 0 0 24px rgba(135,206,235,0.25); }
+  50% { box-shadow: 0 0 22px rgba(135,206,235,0.8), 0 0 44px rgba(135,206,235,0.4); }
+}
+
+/* ===== Section 4: Hobbies ===== */
+#hobbies { padding: 70px 40px 50px; display: flex; flex-direction: column; align-items: center; }
+#hobbies::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: url('p3.jpg') center/cover no-repeat;
+  opacity: 0.18; z-index: -1; pointer-events: none;
+}
+.masonry {
+  columns: 3; column-gap: 20px; max-width: 1000px; width: 100%;
+  position: relative; z-index: 2;
+}
+.hobby-card {
+  break-inside: avoid; margin-bottom: 20px;
+  background: rgba(255,255,255,0.5); backdrop-filter: blur(8px);
+  border-radius: 18px; padding: 22px;
+  border: 1.5px solid rgba(180,215,240,0.5);
+  box-shadow: 0 6px 20px rgba(74,144,217,0.08);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.hobby-card:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(74,144,217,0.18); }
+.hobby-card .emoji { font-size: 2rem; margin-bottom: 8px; }
+.hobby-card h3 { font-family: 'ZCOOL KuaiLe', 'ZCOOL XiaoWei', cursive; font-size: 1.15rem; color: #1B3A5C; margin-bottom: 10px; }
+.hobby-card ul { list-style: none; padding: 0; }
+.hobby-card li {
+  font-size: 0.88rem; color: #3A7BBF; padding: 3px 0;
+  position: relative; padding-left: 16px;
+}
+.hobby-card li::before {
+  content: '~'; position: absolute; left: 0; color: #87CEEB; font-weight: 700;
+}
+.hobby-card .subtitle {
+  font-family: 'ZCOOL XiaoWei', serif;
+  font-size: 0.82rem; color: #6BA0D6; font-weight: 600; margin-top: 8px; margin-bottom: 3px;
+}
+.hobby-card .subtitle:first-of-type { margin-top: 0; }
+.hobby-img {
+  width: 100%; border-radius: 12px; margin: 10px 0 6px;
+  box-shadow: 0 4px 15px rgba(74,144,217,0.12);
+  background: linear-gradient(135deg, #e8f2fb, #d8eaf8);
+  aspect-ratio: 16/10; display: flex; align-items: center; justify-content: center;
+  color: #A0C8E0; font-size: 0.8rem; overflow: hidden;
+}
+.hobby-img img { width: 100%; height: 100%; object-fit: cover; }
+.hobby-note {
+  font-size: 0.78rem; color: #7BA8D0; margin-top: 4px; line-height: 1.4;
+}
+
+.resume-btn-wrap { position: relative; z-index: 2; margin-top: 40px; text-align: center; }
+
+/* ===== Detail Overlay Pages ===== */
+.detail-page {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+  z-index: 150; opacity: 0; pointer-events: none;
+  transform: translateY(24px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+  background: rgba(232,246,252,0.97);
+  overflow-y: auto; overflow-x: hidden;
+  display: flex; align-items: flex-start; justify-content: center;
+  padding: 60px 30px 50px;
+}
+.detail-page.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.detail-page::before {
+  content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: url('bg4.jpg') center/cover no-repeat;
+  opacity: 0.12; z-index: -1;
+}
+.detail-inner {
+  max-width: 750px; width: 100%; position: relative;
+}
+.detail-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: 'ZCOOL XiaoWei', serif; font-size: 1rem; color: #4A90D9;
+  cursor: pointer; margin-bottom: 24px; transition: color 0.2s;
+  background: none; border: none; padding: 6px 0;
+}
+.detail-back:hover { color: #1B3A5C; }
+.detail-header {
+  display: flex; gap: 24px; align-items: flex-start; margin-bottom: 28px;
+}
+.detail-header-img {
+  flex: 0 0 280px; border-radius: 18px; overflow: hidden;
+  box-shadow: 0 10px 30px rgba(74,144,217,0.15);
+  background: linear-gradient(135deg, #e0f0fa, #c8e4f7);
+  aspect-ratio: 16/11; display: flex; align-items: center; justify-content: center;
+  color: #8BB8D6; font-size: 0.85rem;
+}
+.detail-header-img img { width: 100%; height: 100%; object-fit: cover; }
+.detail-header-info { flex: 1; }
+.detail-header-info h2 { font-family: 'ZCOOL KuaiLe', 'ZCOOL XiaoWei', 'Ma Shan Zheng', cursive; font-size: 2rem; color: #1B3A5C; font-weight: 400; margin-bottom: 4px; }
+.detail-header-info .d-role { font-size: 0.95rem; color: #4A90D9; margin-bottom: 4px; }
+.detail-header-info .d-date { font-size: 0.85rem; color: #8BB8D6; margin-bottom: 12px; }
+.detail-body { font-size: 0.95rem; color: #3A6A9E; line-height: 1.9; }
+.detail-body h4 { font-family: 'ZCOOL XiaoWei', serif; font-size: 1.1rem; color: #1B3A5C; margin: 20px 0 8px; }
+.detail-body ul { padding-left: 20px; }
+.detail-body ul li { margin-bottom: 6px; }
+.detail-body .d-skills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+
+/* ===== Modal ===== */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.45); z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: auto; }
+.modal-box {
+  background: #f0f8fd; border-radius: 20px; padding: 36px;
+  max-width: 560px; width: 90%; max-height: 80vh; overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  position: relative;
+}
+.modal-close {
+  position: absolute; top: 12px; right: 16px;
+  background: none; border: none; font-size: 1.5rem;
+  cursor: pointer; color: #5A8FC7; transition: color 0.2s;
+}
+.modal-close:hover { color: #1B3A5C; }
+
+/* ===== Page Label & Back Button ===== */
+.page-label {
+  position: fixed; top: 18px; left: 26px; z-index: 90;
+  font-family: 'Ma Shan Zheng', 'ZCOOL XiaoWei', serif;
+  font-size: 1.2rem; color: rgba(74,144,217,0.5); pointer-events: none;
+}
+.back-btn {
+  position: fixed; top: 16px; left: 18px; z-index: 99;
+  width: 42px; height: 42px; border-radius: 50%;
+  background: rgba(255,255,255,0.55); backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(160,210,240,0.5);
+  color: #4A90D9; font-size: 1.35rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.3s; box-shadow: 0 3px 12px rgba(74,144,217,0.12);
+  opacity: 0; pointer-events: none;
+}
+.back-btn:hover { background: rgba(180,220,245,0.7); transform: scale(1.08); color: #1B3A5C; }
+.back-btn.visible { opacity: 1; pointer-events: auto; }
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .cover-content { flex-direction: column-reverse; gap: 18px; text-align: center; }
+  .cover-left { text-align: center; }
+  .cover-left .name { font-size: 2.4rem; }
+  .cover-left .name span { font-size: 1.3rem; display: block; margin-left: 0; }
+  .carousel { width: 300px; height: 350px; }
+  .cover-right { flex: 0 0 auto; }
+  .edu-cards { flex-direction: column; max-width: 380px; }
+  .nav-btns { flex-direction: column; gap: 12px; }
+  .ocean-btn { width: 200px; }
+
+  .timeline::before { left: 20px; }
+  .timeline-item, .timeline-item:nth-child(even) { flex-direction: column; padding-left: 48px; }
+  .timeline-content { width: 100%; }
+  .timeline-img { width: 100%; margin-bottom: 12px; }
+  .timeline-node { left: 20px; }
+  .masonry { columns: 1; }
+
+  .detail-header { flex-direction: column; }
+  .detail-header-img { flex: 0 0 auto; width: 100%; }
+
+  .nav-dots { right: 8px; gap: 10px; }
+  .nav-dot { width: 9px; height: 9px; }
+}
+@media (max-width: 480px) {
+  .cover-left .name { font-size: 2rem; }
+  .cover-content { gap: 12px; }
+  .carousel { width: 260px; height: 310px; }
+  .section-title { font-size: 2rem; }
+  .honors-track span { font-size: 1.2rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Ocean Background -->
+<div class="ocean-bg"></div>
+<div class="light-spots">
+  <div class="light-spot"></div><div class="light-spot"></div>
+  <div class="light-spot"></div><div class="light-spot"></div>
+  <div class="light-spot"></div>
+</div>
+
+<!-- Floating Stickers -->
+<div class="deco" style="top:6%;left:4%;--size:55px;--rot:-8deg;">
+  <svg class="sticker-svg" viewBox="0 0 100 100"><defs><radialGradient id="sf1"><stop offset="0%" stop-color="#FFD699"/><stop offset="100%" stop-color="#F0A050"/></radialGradient></defs><polygon points="50,5 61,35 95,35 68,55 78,88 50,68 22,88 32,55 5,35 39,35" fill="url(#sf1)" stroke="#E88840" stroke-width="2"/><circle cx="50" cy="48" r="12" fill="rgba(255,255,255,0.5)"/></svg>
+</div>
+<div class="deco" style="top:14%;right:7%;--size:50px;--rot:10deg;">
+  <svg class="sticker-svg" viewBox="0 0 100 100"><defs><radialGradient id="sh1"><stop offset="0%" stop-color="#FFF5F0"/><stop offset="100%" stop-color="#F0C8B8"/></radialGradient></defs><ellipse cx="50" cy="55" rx="30" ry="38" fill="url(#sh1)" stroke="#D4A090" stroke-width="2"/><path d="M50,17 Q30,35 32,60 M50,17 Q70,35 68,60 M50,17 L50,93 M32,45 Q50,50 68,45 M35,65 Q50,70 65,65" fill="none" stroke="#D4A090" stroke-width="1.5" opacity="0.6"/></svg>
+</div>
+<div class="deco" style="top:10%;left:86%;--size:40px;--rot:5deg;">
+  <svg class="sticker-svg" viewBox="0 0 100 100"><defs><radialGradient id="pr1" cx="35%" cy="30%"><stop offset="0%" stop-color="#FFFFFF"/><stop offset="40%" stop-color="#F8F0FF"/><stop offset="100%" stop-color="#D8C8F0"/></radialGradient></defs><circle cx="50" cy="50" r="38" fill="url(#pr1)" stroke="#C0A8D8" stroke-width="1.5"/><ellipse cx="38" cy="36" rx="10" ry="7" fill="rgba(255,255,255,0.7)" transform="rotate(-20,38,36)"/></svg>
+</div>
+<div class="deco" style="top:40%;left:2%;--size:55px;--rot:-5deg;">
+  <svg class="sticker-svg" viewBox="0 0 100 100"><defs><linearGradient id="co1"><stop offset="0%" stop-color="#FFB0B0"/><stop offset="100%" stop-color="#E88080"/></linearGradient></defs><path d="M30,90 Q20,70 25,55 M25,55 Q15,45 18,35 M25,55 Q30,42 28,30 M25,55 Q38,40 40,28 M40,28 Q48,18 52,12 M40,28 Q55,22 60,15" fill="none" stroke="url(#co1)" stroke-width="7" stroke-linecap="round"/><circle cx="18" cy="35" r="5" fill="#FF9090"/><circle cx="28" cy="30" r="4" fill="#FF9090"/><circle cx="40" cy="28" r="5" fill="#FF9090"/><circle cx="52" cy="12" r="4" fill="#FF9090"/><circle cx="60" cy="15" r="4" fill="#FF9090"/></svg>
+</div>
+<div class="deco" style="top:55%;right:4%;--size:48px;--rot:15deg;">
+  <svg class="sticker-svg" viewBox="0 0 100 100"><defs><linearGradient id="cr1"><stop offset="0%" stop-color="#E0F0FF"/><stop offset="100%" stop-color="#A0D0F8"/></linearGradient></defs><polygon points="50,8 78,40 62,88 38,88 22,40" fill="url(#cr1)" stroke="#80B8E0" stroke-width="2" stroke-linejoin="round"/><polygon points="50,8 38,88 50,60" fill="rgba(255,255,255,0.3)"/><line x1="50" y1="60" x2="78" y2="40" stroke="#80B8E0" stroke-width="1" opacity="0.5"/></svg>
+</div>
+<div class="deco" style="top:70%;left:91%;--size:55px;--rot:3deg;">
+  <svg class="sticker-svg" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="40" ry="18" fill="none" stroke="#90CCF0" stroke-width="2.5" opacity="0.6"/><ellipse cx="50" cy="50" rx="28" ry="12" fill="none" stroke="#90CCF0" stroke-width="2" opacity="0.7"/><ellipse cx="50" cy="50" rx="15" ry="6" fill="none" stroke="#90CCF0" stroke-width="2" opacity="0.8"/></svg>
+</div>
+<div class="deco" style="top:30%;left:5%;--size:60px;--rot:-12deg;">
+  <svg class="sticker-svg" viewBox="0 0 100 100"><defs><linearGradient id="dol1"><stop offset="0%" stop-color="#80C8F0"/><stop offset="100%" stop-color="#4A90D9"/></linearGradient></defs><ellipse cx="50" cy="48" rx="32" ry="22" fill="url(#dol1)" stroke="#3A7ABF" stroke-width="1.5"/><polygon points="78,40 95,32 88,52" fill="#6AB8E8" stroke="#3A7ABF" stroke-width="1"/><ellipse cx="28" cy="48" rx="6" ry="10" fill="#C8E8F8"/><circle cx="38" cy="40" r="3" fill="#1B3A5C"/><path d="M50,30 Q60,22 68,26" fill="none" stroke="#3A7ABF" stroke-width="3" stroke-linecap="round"/></svg>
+</div>
+<div class="deco" style="top:78%;right:9%;--size:50px;--rot:-3deg;">
+  <svg class="sticker-svg" viewBox="0 0 100 100"><circle cx="30" cy="35" r="16" fill="none" stroke="#B8E0F8" stroke-width="2"/><ellipse cx="24" cy="30" rx="5" ry="3" fill="rgba(255,255,255,0.6)" transform="rotate(-25,24,30)"/><circle cx="58" cy="28" r="11" fill="none" stroke="#B8E0F8" stroke-width="1.8"/><ellipse cx="54" cy="24" rx="3.5" ry="2" fill="rgba(255,255,255,0.6)" transform="rotate(-20,54,24)"/><circle cx="45" cy="65" r="9" fill="none" stroke="#B8E0F8" stroke-width="1.5"/><ellipse cx="42" cy="62" rx="3" ry="1.8" fill="rgba(255,255,255,0.5)" transform="rotate(-15,42,62)"/></svg>
+</div>
+<div class="deco" style="top:48%;right:3%;--size:42px;--rot:18deg;">
+  <svg class="sticker-svg" viewBox="0 0 100 100"><defs><radialGradient id="sh2"><stop offset="0%" stop-color="#FFF8F5"/><stop offset="100%" stop-color="#F5D8C8"/></radialGradient></defs><ellipse cx="48" cy="52" rx="28" ry="34" fill="url(#sh2)" stroke="#D4A090" stroke-width="2"/><path d="M48,18 Q25,32 28,58 M48,18 Q71,32 68,58 M48,18 L48,86" fill="none" stroke="#D4A090" stroke-width="1.3" opacity="0.5"/></svg>
+</div>
+<div class="deco" style="top:65%;left:7%;--size:38px;--rot:-15deg;">
+  <svg class="sticker-svg" viewBox="0 0 100 100"><polygon points="50,8 60,37 92,37 67,56 76,86 50,67 24,86 33,56 8,37 40,37" fill="#FFE0C0" stroke="#E8A860" stroke-width="2"/><circle cx="50" cy="48" r="9" fill="rgba(255,255,255,0.45)"/></svg>
+</div>
+<div class="deco" style="top:85%;left:88%;--size:44px;--rot:8deg;">
+  <svg class="sticker-svg" viewBox="0 0 100 100"><defs><radialGradient id="pr2" cx="30%" cy="28%"><stop offset="0%" stop-color="#FFFFFF"/><stop offset="50%" stop-color="#FFF8F8"/><stop offset="100%" stop-color="#F0D8D0"/></radialGradient></defs><circle cx="50" cy="52" rx="34" ry="36" fill="url(#pr2)" stroke="#D4A898" stroke-width="1.5"/><ellipse cx="38" cy="38" rx="8" ry="5.5" fill="rgba(255,255,255,0.65)" transform="rotate(-18,38,38)"/></svg>
+</div>
+<div class="deco" style="top:18%;left:48%;--size:36px;--rot:-20deg;">
+  <svg class="sticker-svg" viewBox="0 0 100 100"><polygon points="50,6 62,38 96,38 68,56 78,90 50,68 22,90 32,56 4,38 38,38" fill="#FFE8D0" stroke="#E8B870" stroke-width="2"/></svg>
+</div>
+
+<!-- Global Back Button -->
+<button class="back-btn" onclick="goBack()">&#8592;</button>
+
+<!-- Navigation Dots -->
+<div class="nav-dots">
+  <div class="nav-dot active" data-target="home"></div>
+  <div class="nav-dot" data-target="internships"></div>
+  <div class="nav-dot" data-target="projects"></div>
+  <div class="nav-dot" data-target="hobbies"></div>
+</div>
+
+<!-- ==================== PAGE 1: HOME ==================== -->
+<section class="page active" id="home">
+  <div class="honors-marquee">
+    <div class="honors-track" id="honorsTrack"></div>
+  </div>
+  <div class="cover-content">
+    <div class="cover-left">
+      <div class="name">魏嘉颖 <span>COCO</span></div>
+      <div class="slogan">"Return to zero, update, restart, go up."</div>
+      <div class="summary">逃金融纯理科生火热找工作中...</div>
+    </div>
+    <div class="cover-right">
+      <div class="carousel" id="carousel">
+        <div class="carousel-inner" id="carouselInner">
+          <div class="carousel-slide"><img src="photos/个人照片/微信图片_20260522112318_927_110.jpg" alt="照片1"></div>
+          <div class="carousel-slide"><img src="photos/个人照片/微信图片_20260522112319_928_110.jpg" alt="照片2"></div>
+          <div class="carousel-slide"><img src="photos/个人照片/微信图片_20260522112322_930_110.jpg" alt="照片3"></div>
+          <div class="carousel-slide"><img src="photos/个人照片/微信图片_20260522112323_931_110.jpg" alt="照片4"></div>
+          <div class="carousel-slide"><img src="photos/个人照片/微信图片_20260522112454_932_110.jpg" alt="照片5"></div>
+        </div>
+        <div class="carousel-dots" id="carouselDots"></div>
+      </div>
+    </div>
+  </div>
+  <div class="edu-cards">
+    <div class="edu-card">
+      <div class="school">华中师范大学</div>
+      <div class="tag">211 / 双一流</div>
+      <div class="major">金融工程 本科</div>
+      <div class="period">2021.09 - 2025.06</div>
+      <div class="grade">学分绩排名: 3/21 &nbsp;|&nbsp; GPA: 3.51 / 4.0</div>
+    </div>
+    <div class="edu-card">
+      <div class="school">华东师范大学</div>
+      <div class="tag">985 / 双一流</div>
+      <div class="major">金融专业 硕士</div>
+      <div class="period">2025.09 - 2027.06</div>
+      <div class="grade">在读中</div>
+    </div>
+  </div>
+  <div class="nav-btns">
+    <button onclick="goToPage('projects')" class="ocean-btn">项目经历</button>
+    <button onclick="goToPage('internships')" class="ocean-btn">实习经历</button>
+    <button onclick="goToPage('hobbies')" class="ocean-btn">杂七杂八爱好</button>
+  </div>
+  <div class="cover-footer">
+    <div class="contact">
+      <span>&#x1F4E7; wwjy2021@163.com</span>
+      <span>&#x1F4E7; coc22568@gmail.com</span>
+      <span>&#x1F4DE; +86-15281681180</span>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== PAGE 2: INTERNSHIPS ONLY ==================== -->
+<section class="page scrollable" id="internships">
+  <div class="section-title">实习经历</div>
+  <div class="timeline">
+    <!-- 奇富科技 -->
+    <div class="timeline-item">
+      <div class="timeline-img">
+        <img src="" alt="奇富科技" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=padding:20px;text-align:center><div style=font-size:2.5rem>&#x1F3E2;</div><div>奇富科技</div></div>'">
+      </div>
+      <div class="timeline-content" onclick="openDetail('qifu')">
+        <span class="badge badge-intern">实习</span>
+        <h3>奇富科技 (360数科)</h3>
+        <div class="role">海外战略实习生</div>
+        <div class="date">2026.01 - 2026.04</div>
+        <div class="desc">参与海外个人信贷市场调研，利用AI工具（Claude/Gemini）搭建结构化Prompt库，自动化输出竞品分析报告，并用Vibe-coding搭建项目进度看板。</div>
+        <div class="skills">
+          <span class="skill-tag">AI Agent应用</span><span class="skill-tag">Prompt结构化</span><span class="skill-tag">竞品分析</span><span class="skill-tag">Vibe-coding</span>
+        </div>
+        <span class="detail-link">点击查看完整经历</span>
+      </div>
+      <div class="timeline-node"></div>
+    </div>
+    <!-- 天娱数科 -->
+    <div class="timeline-item">
+      <div class="timeline-img">
+        <img src="" alt="天娱数科" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=padding:20px;text-align:center><div style=font-size:2.5rem>&#x1F4CA;</div><div>天娱数科</div></div>'">
+      </div>
+      <div class="timeline-content" onclick="openDetail('tianyu')">
+        <span class="badge badge-intern">实习</span>
+        <h3>天娱数科</h3>
+        <div class="role">战略投资部实习生</div>
+        <div class="date">2025.09 - 2025.12</div>
+        <div class="desc">聚焦广告及AI机器人赛道，独立产出行业研究报告，清洗财务数据进行可视化分析，并参与被投企业尽调与创始人访谈。</div>
+        <div class="skills">
+          <span class="skill-tag">行业研究</span><span class="skill-tag">数据可视化</span><span class="skill-tag">财务尽调</span><span class="skill-tag">Excel清洗</span>
+        </div>
+        <span class="detail-link">点击查看完整经历</span>
+      </div>
+      <div class="timeline-node"></div>
+    </div>
+    <!-- 国泰海通证券 -->
+    <div class="timeline-item">
+      <div class="timeline-img">
+        <img src="" alt="国泰海通证券" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=padding:20px;text-align:center><div style=font-size:2.5rem>&#x1F4C8;</div><div>国泰海通证券</div></div>'">
+      </div>
+      <div class="timeline-content" onclick="openDetail('guotai')">
+        <span class="badge badge-intern">实习</span>
+        <h3>国泰海通证券</h3>
+        <div class="role">债券融资部实习生</div>
+        <div class="date">2025.05 - 2025.09</div>
+        <div class="desc">协助开展多家企业的债券融资与尽职调查项目，完成底稿整理、财务数据分析及募集说明书撰写。</div>
+        <div class="skills">
+          <span class="skill-tag">Wind数据提取</span><span class="skill-tag">财务核对</span><span class="skill-tag">募集说明书撰写</span>
+        </div>
+        <span class="detail-link">点击查看完整经历</span>
+      </div>
+      <div class="timeline-node"></div>
+    </div>
+    <!-- 武汉轻度科技 -->
+    <div class="timeline-item">
+      <div class="timeline-img">
+        <img src="" alt="武汉轻度科技" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=padding:20px;text-align:center><div style=font-size:2.5rem>&#x1F30D;</div><div>武汉轻度科技</div></div>'">
+      </div>
+      <div class="timeline-content" onclick="openDetail('qingdu')">
+        <span class="badge badge-intern">实习</span>
+        <h3>武汉轻度科技</h3>
+        <div class="role">海外运营实习生</div>
+        <div class="date">2025.01 - 2025.04</div>
+        <div class="desc">负责AI陪伴类虚拟产品出海运营与达人推广，梳理KOL合作SOP，推广作品平均曝光量80000+。</div>
+        <div class="skills">
+          <span class="skill-tag">出海运营</span><span class="skill-tag">KOL推广</span><span class="skill-tag">数据复盘</span><span class="skill-tag">SOP构建</span>
+        </div>
+        <span class="detail-link">点击查看完整经历</span>
+      </div>
+      <div class="timeline-node"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== PAGE 3: PROJECTS ONLY ==================== -->
+<section class="page scrollable" id="projects">
+  <div class="section-title">项目经历</div>
+  <div class="timeline">
+    <!-- 云疗纲目 -->
+    <div class="timeline-item">
+      <div class="timeline-img">
+        <img src="" alt="云疗纲目" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=padding:20px;text-align:center><div style=font-size:2.5rem>&#x1FA78;</div><div>云疗纲目</div></div>'">
+      </div>
+      <div class="timeline-content" onclick="openDetail('yunliao')">
+        <span class="badge badge-project">项目</span>
+        <h3>《云疗纲目》线上养生平台</h3>
+        <div class="role">项目负责人</div>
+        <div class="date">2022.12 - 2024.05</div>
+        <div class="desc">主导"互联网+中医药"养生平台从0到1落地，撰写策划书并成功获国家A级立项及各大创赛奖项；策划"五音疗疾"特色板块并推出系列文创周边。</div>
+        <div class="skills">
+          <span class="skill-tag">项目统筹</span><span class="skill-tag">市场调研</span><span class="skill-tag">产品规划</span><span class="skill-tag">商业策划撰写</span>
+        </div>
+        <span class="detail-link">点击查看完整经历</span>
+      </div>
+      <div class="timeline-node"></div>
+    </div>
+    <!-- 极端天气 -->
+    <div class="timeline-item">
+      <div class="timeline-img">
+        <img src="" alt="极端天气研究" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=padding:20px;text-align:center><div style=font-size:2.5rem>&#x1F327;</div><div>极端天气研究</div></div>'">
+      </div>
+      <div class="timeline-content" onclick="openDetail('weather')">
+        <span class="badge badge-project">项目</span>
+        <h3>极端天气与农业预测对策研究</h3>
+        <div class="role">全国大学生统计建模大赛</div>
+        <div class="date">2024</div>
+        <div class="desc">利用Python/Stata等工具结合机器学习（随机森林、LSTM）与ARIMA时间序列，构建气候预测模型，研究极端天气对水稻产量的影响并提出对策。</div>
+        <div class="skills">
+          <span class="skill-tag">Python</span><span class="skill-tag">Stata</span><span class="skill-tag">LSTM神经网络</span><span class="skill-tag">计量实证分析</span><span class="skill-tag">数据建模</span>
+        </div>
+        <span class="detail-link">点击查看完整经历</span>
+      </div>
+      <div class="timeline-node"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== PAGE 4: HOBBIES ==================== -->
+<section class="page scrollable" id="hobbies">
+  <div class="section-title">Lifestyle & Hobbies</div>
+  <div class="masonry">
+    <!-- 体育运动 -->
+    <div class="hobby-card">
+      <div class="emoji">&#x1F3C3;</div>
+      <h3>体育运动</h3>
+      <ul><li>健身</li><li>游泳</li><li>徒步</li><li>羽毛球</li><li>乒乓球</li></ul>
+    </div>
+    <!-- 文娱艺术 -->
+    <div class="hobby-card">
+      <div class="emoji">&#x1F3A8;</div>
+      <h3>文娱艺术</h3>
+      <ul><li>钢琴</li><li>绘画</li><li>唱歌</li><li>跳舞</li></ul>
+    </div>
+    <!-- 音乐基因 -->
+    <div class="hobby-card">
+      <div class="emoji">&#x1F3A4;</div>
+      <h3>音乐基因</h3>
+      <p style="font-size:0.88rem;color:#3A7BBF;margin-bottom:6px;">资深KPOP粉</p>
+      <div class="subtitle">二代团</div>
+      <ul><li>少女时代</li><li>f(x)</li><li>4MINUTE</li><li>BEAST</li><li>B.A.P</li><li>BTS</li></ul>
+      <div class="subtitle">新生代</div>
+      <ul><li>NMIXX</li><li>NewJeans</li><li>LE SSERAFIM</li><li>Enhypen</li><li>Stray Kids</li><li>TXT</li><li>SEVENTEEN</li></ul>
+    </div>
+    <!-- 游戏宇宙 -->
+    <div class="hobby-card">
+      <div class="emoji">&#x1F3AE;</div>
+      <h3>游戏宇宙</h3>
+      <div class="subtitle">恋与深空</div>
+      <div class="hobby-img">
+        <!-- Game image: 恋与深空 screenshot -->
+        <img src="p1.jpg" alt="恋与深空" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=padding:14px;text-align:center;color:#A0C8E0>&#x1F48E; 恋与深空截图<br><span style=font-size:0.7rem>替换 p1.jpg</span></div>'">
+      </div>
+      <div class="hobby-note">开服玩家 | 总羁绊 20w+ | 主推 秦彻 / 祁煜</div>
+      <div class="hobby-img" style="margin-top:8px;">
+        <img src="p2.jpg" alt="恋与深空2" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=padding:14px;text-align:center;color:#A0C8E0>&#x1F48E; 恋与深空截图<br><span style=font-size:0.7rem>替换 p2.jpg</span></div>'">
+      </div>
+      <div class="subtitle" style="margin-top:8px;">更多游戏</div>
+      <ul>
+        <li>恋与制作人（开服四年玩家）</li>
+        <li>光与夜之恋</li>
+        <li>奇迹暖暖</li>
+        <li>王者荣耀（铂金）</li>
+        <li>小小梦魇系列</li>
+        <li>胡闹厨房 · 双人成行</li>
+        <li>江南百景图 · 保卫萝卜 · 洛克王国</li>
+      </ul>
+    </div>
+    <!-- 二次元浓度 -->
+    <div class="hobby-card">
+      <div class="emoji">&#x1F4FA;</div>
+      <h3>二次元浓度</h3>
+      <div class="subtitle">老二次元</div>
+      <ul><li>魔卡少女樱</li><li>蔷薇少女</li><li>元气少女缘结神</li><li>美少女战士</li><li>约定的梦幻岛</li><li>冰菓</li><li>Free!</li><li>文豪野犬</li></ul>
+      <div class="subtitle">热血 / 悬疑</div>
+      <ul><li>进击的巨人</li><li>东京喰种</li><li>名侦探柯南</li></ul>
+      <div class="subtitle">近期佳作</div>
+      <ul><li>夏日重现</li><li>光死去的夏天</li></ul>
+      <div class="subtitle">小众品味</div>
+      <ul><li>刻刻</li></ul>
+    </div>
+  </div>
+  <div class="resume-btn-wrap">
+    <a href="#" class="ocean-btn" onclick="alert('请替换为实际简历文件路径')" style="font-size:1.05rem;padding:16px 44px;">
+      &#x1F4C4; 下载简历附件
+    </a>
+    <p style="color:#8BB8D6;font-size:0.78rem;margin-top:10px;">
+      更多作品：<a href="#" style="color:#4A90D9;">GitHub</a> &nbsp;|&nbsp;
+      <a href="#" style="color:#4A90D9;">B站</a> &nbsp;|&nbsp;
+      <a href="#" style="color:#4A90D9;">PDF预览</a>
+    </p>
+  </div>
+</section>
+
+<!-- ==================== 6 DETAIL SUB-PAGES ==================== -->
+
+<!-- Detail: 奇富科技 -->
+<div class="detail-page" id="detail-qifu">
+  <div class="detail-inner">
+    <button class="detail-back" onclick="closeDetail()">&#8592; 返回</button>
+    <div class="detail-header">
+      <div class="detail-header-img">
+        <img src="" alt="奇富科技" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=padding:20px;text-align:center>&#x1F3E2;<br>奇富科技<br><span style=font-size:0.7rem>配图占位</span></div>'">
+      </div>
+      <div class="detail-header-info">
+        <h2>奇富科技 (360数科)</h2>
+        <div class="d-role">海外战略实习生</div>
+        <div class="d-date">2026.01 - 2026.04</div>
+      </div>
+    </div>
+    <div class="detail-body">
+      <h4>工作概述</h4>
+      <p>在奇富科技海外战略部门实习期间，深度参与海外个人信贷市场研究与战略规划，协助团队拓展东南亚及拉美业务。</p>
+      <h4>核心职责</h4>
+      <ul>
+        <li><strong>市场调研：</strong>深入调研东南亚（印尼、菲律宾）及拉美（墨西哥、巴西）个人信贷市场，梳理目标国家监管政策、牌照要求、竞争格局及用户画像，输出多份市场进入可行性报告。</li>
+        <li><strong>AI工具应用：</strong>利用Claude、Gemini等大语言模型搭建结构化Prompt库，实现竞品分析报告的半自动化输出，将单份报告撰写时间从2天缩短至3小时。</li>
+        <li><strong>Vibe-coding：</strong>独立使用low-code工具搭建项目进度看板，实现跨团队任务追踪与数据可视化，提升团队协作效率。</li>
+        <li><strong>战略支持：</strong>参与海外业务战略研讨，为管理层提供数据驱动的市场洞察与决策建议。</li>
+      </ul>
+      <h4>关键成果</h4>
+      <ul>
+        <li>完成5个目标市场的深度研究报告</li>
+        <li>搭建覆盖20+竞品的自动化分析Prompt库</li>
+        <li>项目进度看板被团队采纳并持续使用</li>
+      </ul>
+      <div class="d-skills">
+        <span class="skill-tag">AI Agent应用</span><span class="skill-tag">Prompt结构化</span><span class="skill-tag">竞品分析</span><span class="skill-tag">Vibe-coding</span>
+      </div>
+      <p style="margin-top:16px;color:#8BB8D6;font-size:0.82rem;">
+        作品集链接预留：<a href="#" style="color:#4A90D9;">项目看板预览</a> &nbsp;|&nbsp; <a href="#" style="color:#4A90D9;">报告样本</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Detail: 天娱数科 -->
+<div class="detail-page" id="detail-tianyu">
+  <div class="detail-inner">
+    <button class="detail-back" onclick="closeDetail()">&#8592; 返回</button>
+    <div class="detail-header">
+      <div class="detail-header-img">
+        <img src="" alt="天娱数科" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=padding:20px;text-align:center>&#x1F4CA;<br>天娱数科<br><span style=font-size:0.7rem>配图占位</span></div>'">
+      </div>
+      <div class="detail-header-info">
+        <h2>天娱数科</h2>
+        <div class="d-role">战略投资部实习生</div>
+        <div class="d-date">2025.09 - 2025.12</div>
+      </div>
+    </div>
+    <div class="detail-body">
+      <h4>工作概述</h4>
+      <p>在天娱数科战略投资部实习，聚焦广告及AI机器人赛道，参与一级市场投资研究与标的分析。</p>
+      <h4>核心职责</h4>
+      <ul>
+        <li><strong>行业研究：</strong>独立完成广告技术（AdTech）及AI机器人赛道多份深度行业研究报告，覆盖市场规模、产业链格局、头部公司分析等维度。</li>
+        <li><strong>数据可视化：</strong>清洗标的公司财务数据，使用Excel及可视化工具输出分析图表，支撑投资决策。</li>
+        <li><strong>投资尽调：</strong>参与被投企业尽职调查全流程，协助完成创始人访谈，整理访谈纪要并提炼关键洞察。</li>
+        <li><strong>市场追踪：</strong>跟踪一级市场融资动态，维护行业数据库，为团队提供及时的赛道信息更新。</li>
+      </ul>
+      <h4>关键成果</h4>
+      <ul>
+        <li>独立产出5份深度行业研究报告</li>
+        <li>参与3个被投项目的尽职调查</li>
+        <li>完成10+场创始人访谈纪要</li>
+      </ul>
+      <div class="d-skills">
+        <span class="skill-tag">行业研究</span><span class="skill-tag">数据可视化</span><span class="skill-tag">财务尽调</span><span class="skill-tag">Excel清洗</span>
+      </div>
+      <p style="margin-top:16px;color:#8BB8D6;font-size:0.82rem;">
+        作品集链接预留：<a href="#" style="color:#4A90D9;">行研报告样本</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Detail: 国泰海通证券 -->
+<div class="detail-page" id="detail-guotai">
+  <div class="detail-inner">
+    <button class="detail-back" onclick="closeDetail()">&#8592; 返回</button>
+    <div class="detail-header">
+      <div class="detail-header-img">
+        <img src="" alt="国泰海通证券" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=padding:20px;text-align:center>&#x1F4C8;<br>国泰海通证券<br><span style=font-size:0.7rem>配图占位</span></div>'">
+      </div>
+      <div class="detail-header-info">
+        <h2>国泰海通证券</h2>
+        <div class="d-role">债券融资部实习生</div>
+        <div class="d-date">2025.05 - 2025.09</div>
+      </div>
+    </div>
+    <div class="detail-body">
+      <h4>工作概述</h4>
+      <p>在国泰海通证券债券融资部实习，协助开展多家企业的债券融资与尽职调查项目。</p>
+      <h4>核心职责</h4>
+      <ul>
+        <li><strong>项目支持：</strong>协助多家企业开展债券融资项目，参与尽职调查全流程，确保项目按计划推进。</li>
+        <li><strong>底稿管理：</strong>完成底稿整理与归档工作，建立系统化的文件管理体系，确保合规审核材料齐全且有序。</li>
+        <li><strong>数据分析：</strong>利用Wind提取企业财务数据，进行财务比率分析、同业对比与数据核对。</li>
+        <li><strong>文档撰写：</strong>参与募集说明书撰写，协助完成申报材料的准备与格式审核。</li>
+      </ul>
+      <h4>关键成果</h4>
+      <ul>
+        <li>参与5+企业的债券融资项目</li>
+        <li>系统化整理并归档500+页项目底稿</li>
+        <li>独立完成多份财务数据分析报告</li>
+      </ul>
+      <div class="d-skills">
+        <span class="skill-tag">Wind数据提取</span><span class="skill-tag">财务核对</span><span class="skill-tag">募集说明书撰写</span>
+      </div>
+      <p style="margin-top:16px;color:#8BB8D6;font-size:0.82rem;">
+        作品集链接预留：<a href="#" style="color:#4A90D9;">项目案例</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Detail: 武汉轻度科技 -->
+<div class="detail-page" id="detail-qingdu">
+  <div class="detail-inner">
+    <button class="detail-back" onclick="closeDetail()">&#8592; 返回</button>
+    <div class="detail-header">
+      <div class="detail-header-img">
+        <img src="" alt="武汉轻度科技" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=padding:20px;text-align:center>&#x1F30D;<br>武汉轻度科技<br><span style=font-size:0.7rem>配图占位</span></div>'">
+      </div>
+      <div class="detail-header-info">
+        <h2>武汉轻度科技</h2>
+        <div class="d-role">海外运营实习生</div>
+        <div class="d-date">2025.01 - 2025.04</div>
+      </div>
+    </div>
+    <div class="detail-body">
+      <h4>工作概述</h4>
+      <p>负责AI陪伴类虚拟产品出海运营，通过达人推广与内容营销提升产品在海外市场的知名度与用户量。</p>
+      <h4>核心职责</h4>
+      <ul>
+        <li><strong>出海策略：</strong>制定海外推广策略，针对目标市场（欧美/东南亚）用户特点优化产品定位及推广内容方向。</li>
+        <li><strong>KOL合作：</strong>对接并管理海外KOL达人资源，建立从筛选、沟通、合作到效果复盘的全流程SOP。</li>
+        <li><strong>内容运营：</strong>策划并执行KOL推广活动，推广作品平均曝光量达80000+，部分爆款内容单条曝光超20万。</li>
+        <li><strong>数据复盘：</strong>定期分析运营数据，追踪核心指标（曝光量、互动率、转化率），迭代优化推广策略。</li>
+      </ul>
+      <h4>关键成果</h4>
+      <ul>
+        <li>建立50+海外KOL合作资源库</li>
+        <li>推广作品平均曝光量80000+</li>
+        <li>梳理完整的KOL合作SOP文档</li>
+      </ul>
+      <div class="d-skills">
+        <span class="skill-tag">出海运营</span><span class="skill-tag">KOL推广</span><span class="skill-tag">数据复盘</span><span class="skill-tag">SOP构建</span>
+      </div>
+      <p style="margin-top:16px;color:#8BB8D6;font-size:0.82rem;">
+        作品集链接预留：<a href="#" style="color:#4A90D9;">运营案例</a> &nbsp;|&nbsp; <a href="#" style="color:#4A90D9;">SOP文档</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Detail: 云疗纲目 -->
+<div class="detail-page" id="detail-yunliao">
+  <div class="detail-inner">
+    <button class="detail-back" onclick="closeDetail()">&#8592; 返回</button>
+    <div class="detail-header">
+      <div class="detail-header-img">
+        <img src="" alt="云疗纲目" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=padding:20px;text-align:center>&#x1FA78;<br>云疗纲目<br><span style=font-size:0.7rem>配图占位</span></div>'">
+      </div>
+      <div class="detail-header-info">
+        <h2>《云疗纲目》线上养生平台</h2>
+        <div class="d-role">项目负责人</div>
+        <div class="d-date">2022.12 - 2024.05</div>
+      </div>
+    </div>
+    <div class="detail-body">
+      <h4>项目概述</h4>
+      <p>主导"互联网+中医药"养生平台《云疗纲目》从0到1的全流程落地。融合传统中医智慧与现代数字技术，打造面向年轻用户的线上养生解决方案。</p>
+      <h4>核心工作</h4>
+      <ul>
+        <li><strong>商业策划：</strong>独立撰写商业策划书，进行市场调研、竞品分析、商业模式设计及财务预测，成功获得全国大学生创新创业计划<strong>国家A级立项</strong>。</li>
+        <li><strong>产品规划：</strong>设计"五音疗疾"特色板块，将传统五音疗法（宫商角徵羽）与现代音频技术结合，提供个性化音乐养生方案。</li>
+        <li><strong>文创开发：</strong>策划并推出系列文创周边产品，包括养生茶包、香薰蜡烛、手账本等，实现品牌延伸。</li>
+        <li><strong>团队统筹：</strong>统筹跨专业团队（设计、开发、中医顾问），推动项目从概念走向实际落地。</li>
+        <li><strong>竞赛获奖：</strong>参加挑战杯等赛事，获<strong>挑战杯二等奖</strong>等多个奖项。</li>
+      </ul>
+      <h4>获奖情况</h4>
+      <ul>
+        <li>全国大学生创新创业计划国家A级立项</li>
+        <li>挑战杯二等奖</li>
+        <li>其他校级及以上创赛奖项若干</li>
+      </ul>
+      <div class="d-skills">
+        <span class="skill-tag">项目统筹</span><span class="skill-tag">市场调研</span><span class="skill-tag">产品规划</span><span class="skill-tag">商业策划撰写</span>
+      </div>
+      <p style="margin-top:16px;color:#8BB8D6;font-size:0.82rem;">
+        作品集链接预留：<a href="#" style="color:#4A90D9;">策划书PDF</a> &nbsp;|&nbsp; <a href="#" style="color:#4A90D9;">项目展示</a> &nbsp;|&nbsp; <a href="#" style="color:#4A90D9;">B站视频</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Detail: 极端天气研究 -->
+<div class="detail-page" id="detail-weather">
+  <div class="detail-inner">
+    <button class="detail-back" onclick="closeDetail()">&#8592; 返回</button>
+    <div class="detail-header">
+      <div class="detail-header-img">
+        <img src="" alt="极端天气研究" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=padding:20px;text-align:center>&#x1F327;<br>极端天气研究<br><span style=font-size:0.7rem>配图占位</span></div>'">
+      </div>
+      <div class="detail-header-info">
+        <h2>极端天气与农业预测对策研究</h2>
+        <div class="d-role">全国大学生统计建模大赛</div>
+        <div class="d-date">2024</div>
+      </div>
+    </div>
+    <div class="detail-body">
+      <h4>项目概述</h4>
+      <p>参与全国大学生统计建模大赛，研究极端天气事件对水稻产量的影响，构建气候预测与产量评估模型，提出适应性政策建议。</p>
+      <h4>研究方法</h4>
+      <ul>
+        <li><strong>数据预处理：</strong>利用Python（pandas/numpy）及Stata对气象数据和水稻产量数据进行清洗、插值及标准化处理。</li>
+        <li><strong>预测模型：</strong>构建LSTM（长短期记忆）神经网络与ARIMA时间序列相结合的混合模型，对极端天气事件进行预测。</li>
+        <li><strong>特征分析：</strong>使用随机森林进行特征重要性排序，识别对水稻产量影响最大的气候因子（如高温日数、暴雨频率、干旱持续天数）。</li>
+        <li><strong>计量实证：</strong>建立面板数据固定效应模型，定量评估极端天气对不同产区水稻产量的差异化影响。</li>
+      </ul>
+      <h4>关键成果</h4>
+      <ul>
+        <li>混合模型预测准确率达85%以上</li>
+        <li>识别出4个对水稻产量最显著的关键气候因子</li>
+        <li>提出5条针对性的农业适应政策建议</li>
+        <li>完成实证研究论文并参赛</li>
+      </ul>
+      <div class="d-skills">
+        <span class="skill-tag">Python</span><span class="skill-tag">Stata</span><span class="skill-tag">LSTM神经网络</span><span class="skill-tag">计量实证分析</span><span class="skill-tag">数据建模</span>
+      </div>
+      <p style="margin-top:16px;color:#8BB8D6;font-size:0.82rem;">
+        作品集链接预留：<a href="#" style="color:#4A90D9;">论文PDF</a> &nbsp;|&nbsp; <a href="#" style="color:#4A90D9;">GitHub代码</a> &nbsp;|&nbsp; <a href="#" style="color:#4A90D9;">数据可视化</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL ===== -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <h3 id="modalTitle"></h3>
+    <div class="modal-role" id="modalRole"></div>
+    <p id="modalDesc"></p>
+    <div class="skills" id="modalSkills"></div>
+  </div>
+</div>
+
+<script>
+/* ===== Honors Data ===== */
+const honors = [
+  '华中师范大学优秀毕业生', '校级三好学生', '博雅丹桂奖学金',
+  '全国大学生创新创业计划国家A级立项', '挑战杯二等奖', '校级优秀学生干部',
+  '优秀共青团员', '社会实践先进个人', '英语六级 CET-6',
+  '计算机二级 MS Office', '普通话二级甲等'
+];
+const track = document.getElementById('honorsTrack');
+track.innerHTML = [...honors, ...honors].map(h => '<span>' + h + '</span>').join('');
+
+/* ===== Carousel ===== */
+let currentSlide = 0;
+const totalSlides = 5;
+const carouselInner = document.getElementById('carouselInner');
+const carouselDots = document.getElementById('carouselDots');
+
+for (let i = 0; i < totalSlides; i++) {
+  const dot = document.createElement('div');
+  dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+  dot.addEventListener('click', () => goToSlide(i));
+  carouselDots.appendChild(dot);
+}
+
+function goToSlide(index) {
+  currentSlide = index;
+  carouselInner.style.transform = 'translateX(-' + (currentSlide * 100) + '%)';
+  document.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === currentSlide));
+}
+setInterval(() => goToSlide((currentSlide + 1) % totalSlides), 4000);
+
+let touchStartX = 0;
+carouselInner.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+carouselInner.addEventListener('touchend', e => {
+  const diff = touchStartX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 40) {
+    if (diff > 0) goToSlide((currentSlide + 1) % totalSlides);
+    else goToSlide((currentSlide - 1 + totalSlides) % totalSlides);
+  }
+});
+
+/* ===== Page Navigation ===== */
+let currentPage = 'home';
+const pages = ['home', 'internships', 'projects', 'hobbies'];
+const pageBgs = {
+  home: 'bg1.jpg',
+  internships: 'bg2.jpg',
+  projects: 'bg2.jpg',
+  hobbies: 'bg3.jpg'
+};
+
+// Set initial background
+document.querySelector('.ocean-bg').style.backgroundImage = "url('bg1.jpg')";
+
+function updateBackBtn() {
+  const btn = document.querySelector('.back-btn');
+  if (currentPage === 'home') {
+    btn.classList.remove('visible');
+  } else {
+    btn.classList.add('visible');
+  }
+}
+
+function goToPage(pageId) {
+  if (currentPage === pageId) return;
+  document.getElementById(currentPage).classList.remove('active');
+  const target = document.getElementById(pageId);
+  target.classList.add('active');
+  target.scrollTop = 0;
+  currentPage = pageId;
+  // Swap background
+  document.querySelector('.ocean-bg').style.backgroundImage = "url('" + (pageBgs[pageId] || 'bg1.jpg') + "')";
+  // Update nav dots
+  document.querySelectorAll('.nav-dot').forEach(d => {
+    d.classList.toggle('active', d.dataset.target === pageId);
+  });
+  // Update back button
+  updateBackBtn();
+  // Trigger timeline animations
+  if (pageId === 'internships' || pageId === 'projects') {
+    setTimeout(() => {
+      target.querySelectorAll('.timeline-item').forEach(item => item.classList.add('visible'));
+    }, 350);
+  }
+}
+
+function goBack() {
+  // If a detail page is open, close it
+  const openDetail = document.querySelector('.detail-page.open');
+  if (openDetail) {
+    openDetail.classList.remove('open');
+    return;
+  }
+  // Otherwise go back to home
+  goToPage('home');
+}
+
+document.querySelectorAll('.nav-dot').forEach(dot => {
+  dot.addEventListener('click', () => goToPage(dot.dataset.target));
+});
+
+// Initial timeline setup
+setTimeout(() => {
+  document.querySelectorAll('.timeline-item').forEach(item => item.classList.add('visible'));
+}, 600);
+
+/* ===== Detail Page Navigation ===== */
+let previousPage = 'home';
+
+function openDetail(key) {
+  previousPage = currentPage;
+  document.getElementById('detail-' + key).classList.add('open');
+}
+
+function closeDetail() {
+  document.querySelectorAll('.detail-page.open').forEach(p => p.classList.remove('open'));
+}
+
+// Close detail on Escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.detail-page.open').forEach(p => p.classList.remove('open'));
+  }
+});
+</script>
+
+</body>
+</html>
