@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "fund-investment-guide": {
+      "source": "taxueseek/fund-investment-guide",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "18396289ca76a8d5f472be56487d722c7f25582594946e517f4f6700fe660c2c"
+    }
+  }
+}
